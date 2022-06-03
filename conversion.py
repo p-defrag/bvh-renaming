@@ -1,11 +1,47 @@
-from bvh import Bvh,BvhNode
+import re
 
-def rename(bvh_path,fbx_path):
-	source_file = open(bvh_path)
-	dest_file = open(fbx_path,'w')
+bones_map = {
+    "Hips": "root",
+    "Spine": "spine_01",
+    "Spine1": "spine_02",
+    "Neck": "neck",
+    "Head": "head",
+    "LeftShoulder": "clavicle_l",
+    "LeftArm": "upperarm_l",
+    "LeftForeArm": "lowerarm_l",
+    "LeftHand": "hand_l",
+    "RightShoulder": "clavicle_r",
+    "RightArm": "upperarm_r",
+    "RightForeArm": "lowerarm_r",
+    "RightHand": "hand_r",
+    "LeftUpLeg": "tigh_l",
+    "LeftLeg": "calf_l",
+    "LeftFoot": "foot_l",
+    "LeftToeBase": "ball_l",
+    "RightUpLeg": "tigh_r",
+    "RightLeg": "calf_r",
+    "RightFoot": "foot_r",
+    "RightToeBase": "ball_r"
+}
 
-	mocap = Bvh(source_file.read())
-	for name in mocap.get_joints_names():
-		print(f"Renaming{name}")
-		
 
+def rename(bvh_path, out_path):
+    source_file = open(bvh_path)
+
+    fh = source_file.read()
+    for i, (k, v) in enumerate(bones_map.items()):
+        source = "JOINT " + "[A-Z]*[a-z]*:" + k + "\n"
+        dst = "JOINT " + v + "\n"
+        res = re.sub(source, dst, fh, 1)
+        if res != fh:
+            print("Renaming bone " + k + " to " + v)
+        else:
+            source = "ROOT " + "[A-Z]*[a-z]*:" + k + "\n"
+            dst = "ROOT " + v + "\n"
+            res = re.sub(source, dst, fh, 1)
+            if res != fh:
+                print("Renaming root " + k + " to " + v)
+        fh = res
+
+    with open(out_path, "w") as file:
+        file.write(fh)
