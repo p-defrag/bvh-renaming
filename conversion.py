@@ -30,13 +30,15 @@ def rename(bvh_path, out_path):
 
     fh = source_file.read()
     for i, (k, v) in enumerate(bones_map.items()):
-        source = "JOINT " + "[A-Z]*[a-z]*:" + k + "\n"
+        # note: if there are ':' in the bone names, this regex breaks
+        # but if we add the ':', it breaks with the captures from motive
+        source = "JOINT " + "[A-Z]*[a-z]*" + k + "\n"
         dst = "JOINT " + v + "\n"
         res = re.sub(source, dst, fh, 1)
         if res != fh:
             print("Renaming bone " + k + " to " + v)
         else:
-            source = "ROOT " + "[A-Z]*[a-z]*:" + k + "\n"
+            source = "ROOT " + "[A-Z]*[a-z]*" + k + "\n"
             dst = "ROOT " + v + "\n"
             res = re.sub(source, dst, fh, 1)
             if res != fh:

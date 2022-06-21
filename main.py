@@ -1,4 +1,4 @@
 from conversion import rename
 
 if __name__ == '__main__':
-	rename('tests/test_freebvh.bvh', 'tests/test_out.bvh')
+	rename('tests/matteo_spiderman.bvh', 'tests/matteo_spiderman_renamed.bvh')
